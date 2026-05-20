@@ -2,7 +2,7 @@ LAB_SOURCE_FILE = __file__
 
 
 def print_if(s, f):
-    """Print each element of s for which f returns a true value.
+    """打印序列 s 中所有使 f 返回真值的元素。
 
     >>> print_if([3, 4, 5, 6], lambda x: x > 4)
     5
@@ -10,51 +10,52 @@ def print_if(s, f):
     >>> result = print_if([3, 4, 5, 6], lambda x: x % 2 == 0)
     4
     6
-    >>> print(result)  # print_if should return None
+    >>> print(result)  # print_if 应该返回 None
     None
     """
     for x in s:
-        "*** YOUR CODE HERE ***"
+        if f(x):
+            print(x)
 
 
-def close(s, k):
-    """Return how many elements of s that are within k of their index.
+    def close(s, k):
+        """返回 s 中与其下标之差不超过 k 的元素个数。
 
-    >>> t = [6, 2, 4, 3, 5]
-    >>> close(t, 0)  # Only 3 is equal to its index
-    1
-    >>> close(t, 1)  # 2, 3, and 5 are within 1 of their index
-    3
-    >>> close(t, 2)  # 2, 3, 4, and 5 are all within 2 of their index
-    4
-    >>> close(list(range(10)), 0)
-    10
-    """
-    count = 0
-    for i in range(len(s)):  # Use a range to loop over indices
-        "*** YOUR CODE HERE ***"
-    return count
+        >>> t = [6, 2, 4, 3, 5]
+        >>> close(t, 0)  # 只有 3 等于其下标
+        1
+        >>> close(t, 1)  # 2、3、5 与其下标之差不超过 1
+        3
+        >>> close(t, 2)  # 2、3、4、5 与其下标之差不超过 2
+        4
+        >>> close(list(range(10)), 0)
+        10
+        """
+        count = 0
+        for i in range(len(s)):  # Use a range to loop over indices
+            if abs(s[i]-i)<=k:
+                count+=1
+        return count
 
 
 def close_list(s, k):
-    """Return a list of the elements of s that are within k of their index.
+    """返回 s 中所有与其下标之差不超过 k 的元素组成的列表。
 
     >>> t = [6, 2, 4, 3, 5]
-    >>> close_list(t, 0)  # Only 3 is equal to its index
+    >>> close_list(t, 0)  # 只有 3 等于其下标
     [3]
-    >>> close_list(t, 1)  # 2, 3, and 5 are within 1 of their index
+    >>> close_list(t, 1)  # 2、3、5 与其下标之差不超过 1
     [2, 3, 5]
-    >>> close_list(t, 2)  # 2, 3, 4, and 5 are all within 2 of their index
+    >>> close_list(t, 2)  # 2、3、4、5 与其下标之差不超过 2
     [2, 4, 3, 5]
     """
-    return [___ for i in range(len(s)) if ___]
+    return [s[i] for i in range(len(s)) if  abs(s[i]-i)<=k]
 
 
 from math import sqrt
 
 def squares(s):
-    """Returns a new list containing square roots of the elements of the
-    original list that are perfect squares.
+    """返回一个新列表，包含原列表中所有完全平方数的平方根。
 
     >>> seq = [8, 49, 8, 9, 2, 1, 100, 102]
     >>> squares(seq)
@@ -63,12 +64,11 @@ def squares(s):
     >>> squares(seq)
     []
     """
-    return [___ for n in s if ___]
+    return [sqrt(n) for n in s if int(n**0.5) ** 2 == n]
 
 
 def double_eights(n):
-    """Returns whether or not n has two digits in row that
-    are the number 8.
+    """返回 n 中是否存在连续两位数字都是 8。
 
     >>> double_eights(1288)
     True
@@ -82,25 +82,29 @@ def double_eights(n):
     True
     >>> double_eights(78)
     False
-    >>> # ban iteration
+    >>> # 禁止使用循环
     >>> from construct_check import check
     >>> check(LAB_SOURCE_FILE, 'double_eights', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if n<10:
+        return False
+    if n%10==8 and (n//10)%10==8:
+        return True
+    return double_eights(n//10)
 
 
 def make_onion(f, g):
-    """Return a function can_reach(x, y, limit) that returns
-    whether some call expression containing only f, g, and x with
-    up to limit calls will give the result y.
+    """返回函数 can_reach(x, y, limit)，判断是否存在一个
+    仅由 f、g 和 x 组成、调用次数不超过 limit 的调用表达式，
+    其结果等于 y。
 
     >>> up = lambda x: x + 1
     >>> double = lambda y: y * 2
     >>> can_reach = make_onion(up, double)
     >>> can_reach(5, 25, 4)      # 25 = up(double(double(up(5))))
     True
-    >>> can_reach(5, 25, 3)      # Not possible
+    >>> can_reach(5, 25, 3)      # 无法实现
     False
     >>> can_reach(1, 1, 0)      # 1 = 1
     True
@@ -111,15 +115,15 @@ def make_onion(f, g):
     True
     >>> can_reach_string("un", "unending", 3)     # "unending" = add_ing(add_end("un"))
     True
-    >>> can_reach_string("peach", "folding", 4)   # Not possible
+    >>> can_reach_string("peach", "folding", 4)   # 无法实现
     False
     """
     def can_reach(x, y, limit):
         if limit < 0:
-            return ____
+            return False
         elif x == y:
-            return ____
+            return True
         else:
-            return can_reach(____, ____, limit - 1) or can_reach(____, ____, limit - 1)
+            return can_reach(f(x), y, limit - 1) or can_reach(g(x), y, limit - 1)
     return can_reach
 

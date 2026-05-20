@@ -1,30 +1,29 @@
 
 def composite_identity(f, g):
     """
-    Return a function with one parameter x that returns True if f(g(x)) is
-    equal to g(f(x)). You can assume the result of g(x) is a valid input for f
-    and vice versa.
+    返回一个接受单个参数 x 的函数，若 f(g(x)) 等于 g(f(x)) 则返回 True。
+    可以假设 g(x) 的结果是 f 的合法输入，反之亦然。
 
-    >>> add_one = lambda x: x + 1        # adds one to x
-    >>> square = lambda x: x**2          # squares x [returns x^2]
+    >>> add_one = lambda x: x + 1        # x 加一
+    >>> square = lambda x: x**2          # x 的平方（返回 x^2）
     >>> b1 = composite_identity(square, add_one)
     >>> b1(0)                            # (0 + 1) ** 2 == 0 ** 2 + 1
     True
     >>> b1(4)                            # (4 + 1) ** 2 != 4 ** 2 + 1
     False
     """
-    "*** YOUR CODE HERE ***"
+    return lambda x: f(g(x)) == g(f(x))
 
 
 def sum_digits(y):
-    """Return the sum of the digits of non-negative integer y."""
+    """返回非负整数 y 各位数字之和。"""
     total = 0
     while y > 0:
         total, y = total + y % 10, y // 10
     return total
 
 def is_prime(n):
-    """Return whether positive integer n is prime."""
+    """返回正整数 n 是否为质数。"""
     if n == 1:
         return False
     k = 2
@@ -35,10 +34,8 @@ def is_prime(n):
     return True
 
 def count_cond(condition):
-    """Returns a function with one parameter N that counts all the numbers from
-    1 to N that satisfy the two-argument predicate function Condition, where
-    the first argument for Condition is N and the second argument is the
-    number from 1 to N.
+    """返回一个接受单个参数 N 的函数，统计 1 到 N 中满足双参数谓词函数 condition 的数字个数。
+    其中 condition 的第一个参数为 N，第二个参数为 1 到 N 中的某个数。
 
     >>> count_fives = count_cond(lambda n, i: sum_digits(n * i) == 5)
     >>> count_fives(10)   # 50 (10 * 5)
@@ -46,7 +43,7 @@ def count_cond(condition):
     >>> count_fives(50)   # 50 (50 * 1), 500 (50 * 10), 1400 (50 * 28), 2300 (50 * 46)
     4
 
-    >>> is_i_prime = lambda n, i: is_prime(i) # need to pass 2-argument function into count_cond
+    >>> is_i_prime = lambda n, i: is_prime(i) # 需要向 count_cond 传入双参数函数
     >>> count_primes = count_cond(is_i_prime)
     >>> count_primes(2)    # 2
     1
@@ -59,23 +56,38 @@ def count_cond(condition):
     >>> count_primes(20)   # 2, 3, 5, 7, 11, 13, 17, 19
     8
     """
-    "*** YOUR CODE HERE ***"
+    def count(n):
+        count =0
+        for x in range(1, n + 1):
+            if condition(n, x):
+                count+=1
+        return count
+    return count
+                
+
+
+        
 
 
 def multiple(a, b):
-    """Return the smallest number n that is a multiple of both a and b.
+    """返回同时是 a 和 b 的倍数的最小正整数 n（即最小公倍数）。
 
     >>> multiple(3, 4)
     12
     >>> multiple(14, 21)
     42
     """
-    "*** YOUR CODE HERE ***"
+    n = 1
+    while True:
+        if n % a == 0 and n % b == 0:
+            return n
+        n += 1
 
 
 
 def cycle(f1, f2, f3):
-    """Returns a function that is itself a higher-order function.
+    """返回一个本身也是高阶函数的函数。
+    该函数接受整数 n，返回另一个函数，对输入值依次循环应用 f1、f2、f3，共应用 n 次。
 
     >>> def add1(x):
     ...     return x + 1
@@ -100,5 +112,19 @@ def cycle(f1, f2, f3):
     >>> do_two_cycles(1)
     19
     """
-    "*** YOUR CODE HERE ***"
+    def gf(n):
+        def gff(x):
+            for i in range(1,n+1):
+                if(i%3==1):
+                    x=f1(x)
+                if(i%3==2):
+                    x=f2(x)
+                if(i%3==0):
+                    x=f3(x)     
+        return x            
+
+        return gff
+
+
+    return gf
 
